@@ -9,7 +9,6 @@
 
 provider "google-beta" {
   region      = var.region
-  user_project_override = true
 }
 
 /**
@@ -22,4 +21,21 @@ module "root_folder" {
   parent  = var.org_id
 
   names = [ "academeez" ]
+
+  # list of admins for a specific folder
+  # per_folder_admins = {}
+
+  # these admins will have admin for all the folders and subfolders
+  # you can also set a group here
+  all_folder_admins = [
+    "yariv@nerdeez.com"
+  ]
+
+  #  Use this to add more roles to folder admins
+  # folder_admin_roles = [
+  #   "roles/owner",
+  #   "roles/resourcemanager.folderViewer",
+  #   "roles/resourcemanager.projectCreator",
+  #   "roles/compute.networkAdmin"
+  # ]
 }
