@@ -39,3 +39,11 @@ module "root_folder" {
   #   "roles/compute.networkAdmin"
   # ]
 }
+
+/**
+ * Activate the bootstrap module for creating terraform and jenkins
+ */
+module "bootstrap" {
+  source = "./modules/bootstrap"
+  parent_folder = module.root_folder.id
+}
