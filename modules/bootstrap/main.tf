@@ -28,8 +28,7 @@ module "seed_bootstrap" {
 
   source = "terraform-google-modules/bootstrap/google"
   version = "~> 2.1"
-  # org_id = var.org_id
-  org_id = "701515151774"
+  org_id = var.org_id
   folder_id = module.bootstrap_folder.id
   project_id = "prj-b-seed"
   state_bucket_name = "bkt-b-tfstate"

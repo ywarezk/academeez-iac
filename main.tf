@@ -20,7 +20,7 @@ module "root_folder" {
   source  = "terraform-google-modules/folders/google"
   version = "~> 3.0"
 
-  parent  = var.org_id
+  parent  = "organizations/${var.org_id}"
 
   names = [ "academeez" ]
 
