@@ -9,6 +9,8 @@
 
 provider "google-beta" {
   region      = var.region
+  user_project_override = true
+  billing_project = var.billing_account
 }
 
 /**
@@ -46,4 +48,7 @@ module "root_folder" {
 module "bootstrap" {
   source = "./modules/bootstrap"
   parent_folder = module.root_folder.id
+  org_id = var.org_id
+  billing_account = var.billing_account
+  region = var.region
 }
