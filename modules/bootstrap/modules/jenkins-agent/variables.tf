@@ -31,3 +31,18 @@ variable "region" {
   description = "The region where the infastructure will be"
   type = string
 }
+
+variable "group_org_admin" {
+  description = "Group id of the admins"
+  type = string
+}
+
+variable "terraform_sa_name" {
+  description = "Fully-qualified name of the terraform service account. It must be supplied by the seed project"
+  type        = string
+}
+
+variable "terraform_state_bucket" {
+  description = "Default state bucket, used in Cloud Build substitutions. It must be supplied by the seed project"
+  type        = string
+}
