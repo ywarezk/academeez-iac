@@ -49,3 +49,15 @@ resource "google_service_account" "jenkins_agent_gce_sa" {
   account_id   = "sa-jenkins-agent-gce"
   display_name = "Jenkins Agent (GCE instance) custom Service Account"
 }
+
+data "template_file" "jenkins_agent_gce_startup_script" {
+  // Add Cloud NAT for the Agent to reach internet and download updates and necessary binaries
+  // not needed  if user has a golden image with all necessary packages.
+  template = file("${path.module}/files/jenkins_gce_startup_script.sh")
+  vars = {
+    tpl_TERRAFORM_DIR               = "/usr/local/bin/"
+    tpl_TERRAFORM_VERSION           = "1.0.5"
+    tpl_TERRAFORM_VERSION_SHA256SUM = "7ce24478859ab7ca0ba4d8c9c12bb345f52e8efdc42fa3ef9dd30033dbf4b561"
+    tpl_SSH_PUB_KEY                 = var.jenkins_agent_gce_ssh_pub_key
+  }
+}

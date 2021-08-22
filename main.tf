@@ -51,4 +51,5 @@ module "bootstrap" {
   org_id = var.org_id
   billing_account = var.billing_account
   region = var.region
+  jenkins_agent_gce_ssh_pub_key = var.jenkins_agent_gce_ssh_pub_key
 }

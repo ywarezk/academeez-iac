@@ -44,3 +44,8 @@ variable "region" {
   description = "The region where the infastructure will be"
   type = string
 }
+
+variable "jenkins_agent_gce_ssh_pub_key" {
+  description = "SSH public key needed by the Jenkins Agent GCE Instance. The Jenkins Master holds the SSH private key. The correct format is `'ssh-rsa [KEY_VALUE] [USERNAME]'`"
+  type        = string
+}
