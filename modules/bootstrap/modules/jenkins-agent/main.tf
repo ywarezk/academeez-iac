@@ -50,6 +50,9 @@ resource "google_service_account" "jenkins_agent_gce_sa" {
   display_name = "Jenkins Agent (GCE instance) custom Service Account"
 }
 
+/**
+ * This data will be used to trigger the init script in the jenkins agent
+ */
 data "template_file" "jenkins_agent_gce_startup_script" {
   // Add Cloud NAT for the Agent to reach internet and download updates and necessary binaries
   // not needed  if user has a golden image with all necessary packages.
@@ -61,3 +64,57 @@ data "template_file" "jenkins_agent_gce_startup_script" {
     tpl_SSH_PUB_KEY                 = var.jenkins_agent_gce_ssh_pub_key
   }
 }
+
+resource "google_compute_network" "jenkins_agents" {
+  project = module.cicd_project.project_id
+  name    = "vpc-b-jenkinsagents"
+}
+
+resource "google_compute_subnetwork" "jenkins_agents_subnet" {
+  project       = module.cicd_project.project_id
+  name          = "sb-b-jenkinsagents-${var.region}"
+  ip_cidr_range = "172.16.1.0/24"
+  region        = var.region
+  network       = google_compute_network.jenkins_agents.self_link
+}
+
+/**
+ * This will create the jenkins agent
+ */
+# resource "google_compute_instance" "jenkins_agent_gce_instance" {
+#   project      = module.cicd_project.project_id
+#   name         = "jenkins-agent-01"
+#   machine_type = "n1-standard-1"
+#   zone         = "${var.region}-a"
+#   tags = local.jenkins_gce_fw_tags
+#   boot_disk {
+#     initialize_params {
+#       // It is better if user has a golden image with all necessary packages.
+#       image = "debian-cloud/debian-9"
+#     }
+#   }
+
+#   network_interface {
+#     // Internal and static IP configuration
+#     subnetwork = google_compute_subnetwork.jenkins_agents_subnet.self_link
+#     network_ip = google_compute_address.jenkins_agent_gce_static_ip.address
+#   }
+
+#   // Adding ssh public keys to the GCE instance metadata, so the Jenkins Master can connect to this Agent
+#   metadata = {
+#     enable-oslogin = "false"
+#     ssh-keys       = var.jenkins_agent_gce_ssh_pub_key
+#   }
+
+#   metadata_startup_script = data.template_file.jenkins_agent_gce_startup_script.rendered
+
+#   service_account {
+#     email = google_service_account.jenkins_agent_gce_sa.email
+#     scopes = [
+#       "https://www.googleapis.com/auth/cloud-platform",
+#     ]
+#   }
+
+#   // allow stopping the GCE instance to update some of its values
+#   allow_stopping_for_update = true
+# }

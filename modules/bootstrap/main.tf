@@ -128,6 +128,7 @@ module "jenkins_bootstrap" {
  folder_id                               = module.bootstrap_folder.id
  billing_account                         = var.billing_account
  jenkins_agent_gce_ssh_pub_key = var.jenkins_agent_gce_ssh_pub_key
+ region = var.region
 #  group_org_admins                        = var.group_org_admins
 #  default_region                          = var.default_region
 #  terraform_service_account               = module.seed_bootstrap.terraform_sa_email
