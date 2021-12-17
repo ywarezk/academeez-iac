@@ -13,6 +13,9 @@ provider "google-beta" {
   billing_project = var.billing_account
 }
 
+provider "github" {
+}
+
 /**
  * Create the root folder of the project
  */
@@ -50,6 +53,16 @@ module "bootstrap" {
   parent_folder = module.root_folder.id
   org_id = var.org_id
   billing_account = var.billing_account
-  region = var.region
-  jenkins_agent_gce_ssh_pub_key = var.jenkins_agent_gce_ssh_pub_key
 }
+
+data "github_repository" "academeez_repo" {
+  full_name = "ywarezk/academeez"
+}
+
+/*
+resource "github_actions_secret" "test_secret" {
+  repository       = data.github_repository.academeez_repo.name
+  secret_name      = "test_secret"
+  plaintext_value  = var.test_secret
+}
+*/
