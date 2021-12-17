@@ -60,9 +60,16 @@ data "github_repository" "academeez_repo" {
 }
 
 /*
+# this is how to create a secret on github
 resource "github_actions_secret" "test_secret" {
   repository       = data.github_repository.academeez_repo.name
   secret_name      = "test_secret"
   plaintext_value  = var.test_secret
 }
 */
+
+module "environments" {
+  for_each = var.environments
+  source = "./modules/env"
+  env_name = each.key
+}

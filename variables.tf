@@ -20,3 +20,8 @@ variable "billing_account" {
   description = "Billing accound of the infastructure"
   type = string
 }
+
+variable "environments" {
+  description = "Environments object"
+  type = map
+}
