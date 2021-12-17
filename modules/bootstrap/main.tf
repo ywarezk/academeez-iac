@@ -29,6 +29,7 @@ module "bootstrap_project" {
   billing_account             = var.billing_account
   activate_apis               = [
     "storage.googleapis.com",
+    "billingbudgets.googleapis.com"
   ]
   labels                      = {
     environment       = "bootstrap"
@@ -46,4 +47,13 @@ resource "google_storage_bucket" "tf_state_bucket" {
   name          = "bkt-b-tf-state"
   location      = "US"
   project       = module.bootstrap_project.project_id
+}
+
+/**
+ * Create a service account to use to run terraform commands
+ */
+resource "google_service_account" "service_account" {
+  account_id   = "sa-terraform"
+  display_name = "Terraform Service Account"
+  project = module.bootstrap_project.project_id
 }

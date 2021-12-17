@@ -11,3 +11,20 @@ variable "env_name" {
   type = string
   description = "dev/prod/staging..."
 }
+
+variable "org_id" {
+  description = "The id of the organization"
+  type = string
+  default = "701515151774"
+}
+
+variable "billing_account" {
+  description = "Billing accound of the infastructure"
+  type = string
+  default = "01187F-6BAFD6-F8EE32"
+}
+
+variable "budget_amount" {
+  type = number
+  description = "The amount to use for a budget alert"
+}

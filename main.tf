@@ -10,7 +10,8 @@
 provider "google-beta" {
   region      = var.region
   user_project_override = true
-  billing_project = var.billing_account
+  # billing_project = var.billing_account
+  billing_project = "prj-b-bootstrap-45d7"
 }
 
 provider "github" {
@@ -72,4 +73,5 @@ module "environments" {
   for_each = var.environments
   source = "./modules/env"
   env_name = each.key
+  budget_amount = each.value["budget_amount"]
 }
