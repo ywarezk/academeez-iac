@@ -55,7 +55,7 @@ resource "google_storage_bucket" "tf_state_bucket" {
 /**
  * Create a service account to use to run terraform commands
  */
-resource "google_service_account" "service_account" {
+resource "google_service_account" "terraform_service_account" {
   account_id   = "sa-terraform"
   display_name = "Terraform Service Account"
   project = module.bootstrap_project.project_id
@@ -74,5 +74,14 @@ module "terraform_admins" {
     "yariv@nerdeez.com"
   ]
   members = var.terraform_admins
+}
+
+resource "google_service_account_iam_binding" "terraform-sa-iam" {
+  service_account_id = google_service_account.terraform_service_account.name
+  role               = "roles/iam.serviceAccountUser"
+
+  members = [
+    "group:${module.terraform_admins.id}"
+  ]
 }
 
