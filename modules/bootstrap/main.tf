@@ -29,7 +29,10 @@ module "bootstrap_project" {
   billing_account             = var.billing_account
   activate_apis               = [
     "storage.googleapis.com",
-    "billingbudgets.googleapis.com"
+    "billingbudgets.googleapis.com",
+    "iam.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "cloudidentity.googleapis.com"
   ]
   labels                      = {
     environment       = "bootstrap"
@@ -57,3 +60,19 @@ resource "google_service_account" "service_account" {
   display_name = "Terraform Service Account"
   project = module.bootstrap_project.project_id
 }
+
+/**
+ * group of principals that can modify terraform
+ */
+module "terraform_admins" {
+  source       = "terraform-google-modules/group/google"
+  id           = "grp-terraform-admins@nerdeez.com"
+  display_name = "Terraform Admins"
+  description  = "Users with terraform privilages"
+  domain       = "nerdeez.com"
+  owners       = [
+    "yariv@nerdeez.com"
+  ]
+  members = var.terraform_admins
+}
+
