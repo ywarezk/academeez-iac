@@ -32,7 +32,13 @@ module "bootstrap_project" {
     "billingbudgets.googleapis.com",
     "iam.googleapis.com",
     "cloudresourcemanager.googleapis.com",
-    "cloudidentity.googleapis.com"
+    "cloudidentity.googleapis.com",
+    "serviceusage.googleapis.com",
+
+    "containerregistry.googleapis.com",
+    "sourcerepo.googleapis.com",
+    "secretmanager.googleapis.com",
+    "gmail.googleapis.com"
   ]
   labels                      = {
     environment       = "bootstrap"
@@ -62,6 +68,137 @@ resource "google_service_account" "terraform_service_account" {
 }
 
 /**
+ * the terraform service account can access the bucket
+ */
+resource "google_storage_bucket_iam_binding" "terraform_sa_allow_bucket" {
+  bucket = google_storage_bucket.tf_state_bucket.name
+  role = "roles/storage.admin"
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * the terraform service account can access folders
+ */
+resource "google_organization_iam_binding" "terraform_sa_folders_creators" {
+  org_id  = "701515151774"
+  role    = "roles/resourcemanager.folderCreator"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * terraform service has service usage admin on organization
+ */
+resource "google_organization_iam_binding" "terraform_sa_serviceusage_admin" {
+  org_id  = "701515151774"
+  role    = "roles/serviceusage.serviceUsageAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * browser permission for terraform
+ */
+resource "google_organization_iam_binding" "terraform_sa_browser" {
+  org_id  = "701515151774"
+  role    = "roles/browser"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * organization admin for terraform
+ */
+resource "google_organization_iam_binding" "terraform_sa_organization_admin" {
+  org_id  = "701515151774"
+  role    = "roles/resourcemanager.organizationAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * billing permission for terraform
+ */
+resource "google_organization_iam_binding" "terraform_sa_billing" {
+  org_id  = "701515151774"
+  role    = "roles/billing.admin"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * service account user for terraform
+ */
+resource "google_organization_iam_binding" "terraform_sa_sa_user" {
+  org_id  = "701515151774"
+  role    = "roles/iam.serviceAccountUser"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
+ * service account user for terraform
+ */
+resource "google_organization_iam_binding" "terraform_sa_editor" {
+  org_id  = "701515151774"
+  role    = "roles/editor"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+resource "google_organization_iam_binding" "terraform_sa_role_admin" {
+  org_id  = "701515151774"
+  role    = "roles/iam.organizationRoleAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+resource "google_organization_iam_binding" "terraform_sa_role_cloudasset" {
+  org_id  = "701515151774"
+  role    = "roles/cloudasset.owner"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+resource "google_organization_iam_binding" "terraform_sa_role_security_reviewer" {
+  org_id  = "701515151774"
+  role    = "roles/iam.securityReviewer"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+resource "google_organization_iam_binding" "terraform_sa_role_policy_admin" {
+  org_id  = "701515151774"
+  role    = "roles/orgpolicy.policyAdmin"
+
+  members = [
+    "serviceAccount:${google_service_account.terraform_service_account.email}"
+  ]
+}
+
+/**
  * group of principals that can modify terraform
  */
 module "terraform_admins" {
@@ -71,17 +208,32 @@ module "terraform_admins" {
   description  = "Users with terraform privilages"
   domain       = "nerdeez.com"
   owners       = [
-    "yariv@nerdeez.com"
+    "yariv@nerdeez.com",
+    "sa-terraform@prj-b-bootstrap-45d7.iam.gserviceaccount.com"
   ]
   members = var.terraform_admins
 }
 
-resource "google_service_account_iam_binding" "terraform-sa-iam" {
+/**
+ * group members can impersionate this service account
+ */
+resource "google_service_account_iam_binding" "terraform_sa_iam" {
   service_account_id = google_service_account.terraform_service_account.name
   role               = "roles/iam.serviceAccountUser"
 
   members = [
     "group:${module.terraform_admins.id}"
   ]
+}
+
+/**
+ * Allow the terraform group to create tokens for impersionation
+ */
+resource "google_service_account_iam_binding" "terraform_sa_token_creator" {
+    service_account_id = google_service_account.terraform_service_account.name
+    role               = "roles/iam.serviceAccountTokenCreator"
+    members = [
+        "group:${module.terraform_admins.id}"
+    ]
 }
 

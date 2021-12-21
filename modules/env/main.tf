@@ -32,7 +32,10 @@ module "env_project" {
   # budget_amount               = var.budget_amount
   create_project_sa           = false
   activate_apis               = [
-    "billingbudgets.googleapis.com"
+    "billingbudgets.googleapis.com",
+    "serviceusage.googleapis.com",
+    "cloudidentity.googleapis.com",
+    "cloudresourcemanager.googleapis.com"
   ]
   labels                      = {
     environment       = var.env_name

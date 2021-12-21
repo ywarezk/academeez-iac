@@ -7,14 +7,32 @@
  * @license MIT
  */
 
-provider "google-beta" {
-  region      = var.region
-  user_project_override = true
-  # billing_project = var.billing_account
-  billing_project = "prj-b-bootstrap-45d7"
+locals {
+  terraform_service_account = "sa-terraform@prj-b-bootstrap-45d7.iam.gserviceaccount.com"
+}
+
+provider "google" {
+  alias = "impersonation"
+  scopes = [
+    "https://www.googleapis.com/auth/cloud-platform",
+    "https://www.googleapis.com/auth/userinfo.email",
+  ]
 }
 
 provider "github" {
+}
+
+data "google_service_account_access_token" "default" {
+  provider               = google.impersonation
+  target_service_account = local.terraform_service_account
+  scopes                 = ["userinfo-email", "cloud-platform"]
+  lifetime               = "1200s"
+}
+
+provider "google-beta" {
+  region          = var.region
+  access_token    = data.google_service_account_access_token.default.access_token
+  request_timeout = "60s"
 }
 
 /**
@@ -24,9 +42,9 @@ module "root_folder" {
   source  = "terraform-google-modules/folders/google"
   version = "~> 3.0"
 
-  parent  = "organizations/${var.org_id}"
+  parent = "organizations/${var.org_id}"
 
-  names = [ "academeez" ]
+  names = ["academeez"]
 
   # list of admins for a specific folder
   # per_folder_admins = {}
@@ -50,9 +68,9 @@ module "root_folder" {
  * Activate the bootstrap module for creating terraform and jenkins
  */
 module "bootstrap" {
-  source = "./modules/bootstrap"
-  parent_folder = module.root_folder.id
-  org_id = var.org_id
+  source          = "./modules/bootstrap"
+  parent_folder   = module.root_folder.id
+  org_id          = var.org_id
   billing_account = var.billing_account
 }
 
@@ -70,8 +88,8 @@ resource "github_actions_secret" "test_secret" {
 */
 
 module "environments" {
-  for_each = var.environments
-  source = "./modules/env"
-  env_name = each.key
+  for_each      = var.environments
+  source        = "./modules/env"
+  env_name      = each.key
   budget_amount = each.value["budget_amount"]
 }
