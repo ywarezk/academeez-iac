@@ -44,18 +44,33 @@ module "env_project" {
   }
 }
 
-/*
-resource "google_billing_budget" "budget" {
-  billing_account = "01187F-6BAFD6-F8EE32"
-  display_name = "Example Billing Budget"
-  amount {
-    specified_amount {
-      currency_code = "USD"
-      units = "100000"
-    }
-  }
-  threshold_rules {
-      threshold_percent =  0.5
+/**
+ * Create the network for the cluster
+ */
+module "env_network" {
+  source       = "terraform-google-modules/network/google"
+  project_id   = module.env_project.project_id
+  network_name = "vpc-e-${var.env_name}"
+
+  subnets = [
+    {
+      subnet_name   = "sb-${var.env_name}"
+      subnet_ip     = "10.0.0.0/17"
+      subnet_region = var.region
+      subnet_private_access = "true"
+    },
+  ]
+
+  secondary_ranges = {
+    "sb-${var.env_name}" = [
+      {
+        range_name    = "sb-range-pods"
+        ip_cidr_range = "192.168.0.0/18"
+      },
+      {
+        range_name    = "sb-range-services"
+        ip_cidr_range = "192.168.64.0/18"
+      },
+    ]
   }
 }
-*/

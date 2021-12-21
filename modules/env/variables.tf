@@ -28,3 +28,9 @@ variable "budget_amount" {
   type = number
   description = "The amount to use for a budget alert"
 }
+
+variable "region" {
+  description = "The region where the infastructure will be"
+  type = string
+  default = "us-central1"
+}
