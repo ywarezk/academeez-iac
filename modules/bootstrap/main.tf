@@ -141,57 +141,9 @@ resource "google_organization_iam_binding" "terraform_sa_billing" {
 /**
  * service account user for terraform
  */
-resource "google_organization_iam_binding" "terraform_sa_sa_user" {
-  org_id  = "701515151774"
-  role    = "roles/iam.serviceAccountUser"
-
-  members = [
-    "serviceAccount:${google_service_account.terraform_service_account.email}"
-  ]
-}
-
-/**
- * service account user for terraform
- */
 resource "google_organization_iam_binding" "terraform_sa_editor" {
   org_id  = "701515151774"
   role    = "roles/editor"
-
-  members = [
-    "serviceAccount:${google_service_account.terraform_service_account.email}"
-  ]
-}
-
-resource "google_organization_iam_binding" "terraform_sa_role_admin" {
-  org_id  = "701515151774"
-  role    = "roles/iam.organizationRoleAdmin"
-
-  members = [
-    "serviceAccount:${google_service_account.terraform_service_account.email}"
-  ]
-}
-
-resource "google_organization_iam_binding" "terraform_sa_role_cloudasset" {
-  org_id  = "701515151774"
-  role    = "roles/cloudasset.owner"
-
-  members = [
-    "serviceAccount:${google_service_account.terraform_service_account.email}"
-  ]
-}
-
-resource "google_organization_iam_binding" "terraform_sa_role_security_reviewer" {
-  org_id  = "701515151774"
-  role    = "roles/iam.securityReviewer"
-
-  members = [
-    "serviceAccount:${google_service_account.terraform_service_account.email}"
-  ]
-}
-
-resource "google_organization_iam_binding" "terraform_sa_role_policy_admin" {
-  org_id  = "701515151774"
-  role    = "roles/orgpolicy.policyAdmin"
 
   members = [
     "serviceAccount:${google_service_account.terraform_service_account.email}"

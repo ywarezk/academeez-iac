@@ -29,7 +29,7 @@ module "env_project" {
   folder_id                   = module.env_folder.id
   org_id                      = var.org_id
   billing_account             = var.billing_account
-  # budget_amount               = var.budget_amount
+  budget_amount               = var.budget_amount
   create_project_sa           = false
   activate_apis               = [
     "billingbudgets.googleapis.com",
