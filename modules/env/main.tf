@@ -74,3 +74,12 @@ module "env_network" {
     ]
   }
 }
+
+/**
+ * Create service account used by the nodes
+ */
+resource "google_service_account" "sa_env_cluster" {
+  project      = module.env_project.project_id
+  account_id   = "env-cluster"
+  display_name = "Service account for the nodes in the cluster"
+}
