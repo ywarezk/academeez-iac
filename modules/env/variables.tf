@@ -34,12 +34,9 @@ variable "env_options" {
     disk_type                  = string
     preemptible                = bool
     region                     = string
+    zones                      = list(string)
+    machine_type               = string
   })
   description = "Environment configuration object"
 }
 
-variable "region" {
-  description = "The region where the infastructure will be"
-  type        = string
-  default     = "us-central1"
-}

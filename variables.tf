@@ -31,6 +31,7 @@ variable "environments" {
     dev = {
       budget_amount              = 100
       horizontal_pod_autoscaling = false
+      # change this in production you cheap fuck!
       machine_type               = "e2-micro"
       min_count                  = 1
       max_count                  = 1
@@ -40,10 +41,13 @@ variable "environments" {
       disk_type = "pd-standard"
 
       # on production this should be set to false
-      preemptible                = true
+      preemptible = true
 
       # Set to warsaw for cheapest prices, for production set to use
-      region                     = "europe-central2"
+      region = "europe-central2"
+
+      # in production: ["us-central1-a", "us-central1-b", "us-central1-f"]
+      zones = []
     }
   }
 }

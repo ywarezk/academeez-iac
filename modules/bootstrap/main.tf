@@ -38,7 +38,9 @@ module "bootstrap_project" {
     "containerregistry.googleapis.com",
     "sourcerepo.googleapis.com",
     "secretmanager.googleapis.com",
-    "gmail.googleapis.com"
+    "gmail.googleapis.com",
+
+    "container.googleapis.com"
   ]
   labels                      = {
     environment       = "bootstrap"
