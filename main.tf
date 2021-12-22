@@ -88,8 +88,8 @@ resource "github_actions_secret" "test_secret" {
 */
 
 module "environments" {
-  for_each      = var.environments
-  source        = "./modules/env"
-  env_name      = each.key
-  budget_amount = each.value["budget_amount"]
+  for_each    = var.environments
+  source      = "./modules/env"
+  env_name    = each.key
+  env_options = each.value
 }

@@ -8,29 +8,38 @@
  */
 
 variable "env_name" {
-  type = string
+  type        = string
   description = "dev/prod/staging..."
 }
 
 variable "org_id" {
   description = "The id of the organization"
-  type = string
-  default = "701515151774"
+  type        = string
+  default     = "701515151774"
 }
 
 variable "billing_account" {
   description = "Billing accound of the infastructure"
-  type = string
-  default = "01187F-6BAFD6-F8EE32"
+  type        = string
+  default     = "01187F-6BAFD6-F8EE32"
 }
 
-variable "budget_amount" {
-  type = number
-  description = "The amount to use for a budget alert"
+variable "env_options" {
+  type = object({
+    budget_amount              = number
+    horizontal_pod_autoscaling = bool
+    min_count                  = number
+    max_count                  = number
+    initial_node_count         = number
+    disk_type                  = string
+    preemptible                = bool
+    region                     = string
+  })
+  description = "Environment configuration object"
 }
 
 variable "region" {
   description = "The region where the infastructure will be"
-  type = string
-  default = "us-central1"
+  type        = string
+  default     = "us-central1"
 }
