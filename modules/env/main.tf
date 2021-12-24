@@ -12,7 +12,7 @@
  */
 module "env_folder" {
   source  = "terraform-google-modules/folders/google"
-  parent  = "folders/624492365583" # parent is always the root folder
+  parent  = "folders/1086752552277" # parent is always the root folder
   names = [
     var.env_name # dev/prod/...
   ]
@@ -23,7 +23,7 @@ module "env_folder" {
  */
 module "env_project" {
   source                      = "terraform-google-modules/project-factory/google"
-  name                        = "prj-e-${var.env_name}"
+  name                        = "prj-academeez-${var.env_name}"
   random_project_id           = true
   disable_services_on_destroy = false
   folder_id                   = module.env_folder.id
@@ -51,7 +51,7 @@ module "env_project" {
 module "env_network" {
   source       = "terraform-google-modules/network/google"
   project_id   = module.env_project.project_id
-  network_name = "vpc-e-${var.env_name}"
+  network_name = "vpc-academeez-${var.env_name}"
 
   subnets = [
     {
@@ -81,7 +81,7 @@ module "env_network" {
  */
 resource "google_service_account" "sa_env_cluster" {
   project      = module.env_project.project_id
-  account_id   = "env-cluster"
+  account_id   = "sa-academeez-${var.env_name}-cluster"
   display_name = "Service account for the nodes in the cluster"
 }
 
@@ -159,3 +159,15 @@ module "env_gke" {
     ]
   }
 }
+
+/**
+ * terraform service account can edit this project
+ */
+# resource "google_project_iam_binding" "project" {
+#   project = "your-project-id"
+#   role    = "roles/editor"
+
+#   members = [
+#     "user:jane@example.com",
+#   ]
+# }

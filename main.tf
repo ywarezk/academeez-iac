@@ -7,32 +7,11 @@
  * @license MIT
  */
 
-locals {
-  terraform_service_account = "sa-nerdeez-terraform@prj-nerdeez-common-d528.iam.gserviceaccount.com"
-}
-
-provider "google" {
-  alias = "impersonation"
-  scopes = [
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/userinfo.email",
-  ]
-}
-
 provider "github" {
-}
-
-data "google_service_account_access_token" "default" {
-  provider               = google.impersonation
-  target_service_account = local.terraform_service_account
-  scopes                 = ["userinfo-email", "cloud-platform"]
-  lifetime               = "1200s"
 }
 
 provider "google-beta" {
   region          = var.region
-  access_token    = data.google_service_account_access_token.default.access_token
-  request_timeout = "60s"
 }
 
 /**
@@ -78,9 +57,9 @@ module "academeez_common" {
 # }
 # */
 
-# module "environments" {
-#   for_each    = var.environments
-#   source      = "./modules/env"
-#   env_name    = each.key
-#   env_options = each.value
-# }
+module "environments" {
+  for_each    = var.environments
+  source      = "./modules/env"
+  env_name    = each.key
+  env_options = each.value
+}
