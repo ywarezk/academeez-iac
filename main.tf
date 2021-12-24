@@ -8,7 +8,7 @@
  */
 
 locals {
-  terraform_service_account = "sa-terraform@prj-b-bootstrap-45d7.iam.gserviceaccount.com"
+  terraform_service_account = "sa-nerdeez-terraform@prj-nerdeez-common-d528.iam.gserviceaccount.com"
 }
 
 provider "google" {
@@ -40,7 +40,6 @@ provider "google-beta" {
  */
 module "root_folder" {
   source  = "terraform-google-modules/folders/google"
-  version = "~> 3.0"
 
   parent = "organizations/${var.org_id}"
 
@@ -54,42 +53,34 @@ module "root_folder" {
   all_folder_admins = [
     "yariv@nerdeez.com"
   ]
-
-  #  Use this to add more roles to folder admins
-  # folder_admin_roles = [
-  #   "roles/owner",
-  #   "roles/resourcemanager.folderViewer",
-  #   "roles/resourcemanager.projectCreator",
-  #   "roles/compute.networkAdmin"
-  # ]
 }
 
 /**
  * Activate the bootstrap module for creating terraform and jenkins
  */
-module "bootstrap" {
-  source          = "./modules/bootstrap"
+module "academeez_common" {
+  source          = "./modules/common"
   parent_folder   = module.root_folder.id
   org_id          = var.org_id
   billing_account = var.billing_account
 }
 
-data "github_repository" "academeez_repo" {
-  full_name = "ywarezk/academeez"
-}
+# data "github_repository" "academeez_repo" {
+#   full_name = "ywarezk/academeez"
+# }
 
-/*
-# this is how to create a secret on github
-resource "github_actions_secret" "test_secret" {
-  repository       = data.github_repository.academeez_repo.name
-  secret_name      = "test_secret"
-  plaintext_value  = var.test_secret
-}
-*/
+# /*
+# # this is how to create a secret on github
+# resource "github_actions_secret" "test_secret" {
+#   repository       = data.github_repository.academeez_repo.name
+#   secret_name      = "test_secret"
+#   plaintext_value  = var.test_secret
+# }
+# */
 
-module "environments" {
-  for_each    = var.environments
-  source      = "./modules/env"
-  env_name    = each.key
-  env_options = each.value
-}
+# module "environments" {
+#   for_each    = var.environments
+#   source      = "./modules/env"
+#   env_name    = each.key
+#   env_options = each.value
+# }
